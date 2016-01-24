@@ -4,8 +4,13 @@ module Converter
 		format :json
 		rescue_from :all
 		# Pick Up Here!
-		# error_formatter :json, lambda { |
-		# }
+		error_formatter :json, lambda { |message, backtrace, options, env|
+			{
+				status: 'failed',
+				message: message,
+				error_code: 123
+			}
+		}
 		helpers do
 			def get_exchange_rate(currency)
 				case currency
@@ -28,6 +33,7 @@ module Converter
 
 			get :exchange do
 				converted_amount = params[:amount] * get_exchange_rate(params[:to_currency])
+				#Hash to actually RETURN Value
 				{
 					amount: converted_amount,
 					currency: params[:to_currency]
